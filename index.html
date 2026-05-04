@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常理业信息服务</title>
+    <script src="data.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .login-box {
+            max-width: 360px;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .login-box input:focus { outline: none; border-color: #2196F3; }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .login-box button:hover { background: #1976D2; }
+
+        .error {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 500; }
+
+        .header button {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .search-options {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .search-options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .search-options input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            min-width: 100px;
+            flex: 1;
+        }
+
+        .stat-item .num {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2196F3;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* 按钮区域 - 与统计框一样大 */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .action-btn:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+
+        .mailbox-action {
+            color: #2196F3;
+        }
+
+        .about-action {
+            color: #2196F3;
+        }
+
+        .list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .student-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-item:last-child { border-bottom: none; }
+        .student-item:hover { background: #fafafa; }
+
+        .student-info h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .student-info p { font-size: 13px; color: #666; }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .tag.male { background: #e3f2fd; color: #1976D2; }
+        .tag.female { background: #fce4ec; color: #c2185b; }
+
+        .empty {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .pagination-controls {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .page-size-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .page-size-selector select {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-nav button {
+            padding: 6px 14px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .page-nav button:hover:not(:disabled) {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .page-nav button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watermark-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .watermark-grid {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            display: flex;
+            flex-wrap: wrap;
+            transform: rotate(-30deg);
+        }
+
+        .watermark-item {
+            width: 200px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: rgba(200, 200, 200, 0.25);
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        /* Logo叠加在"常理业"三个字上方中间，留空隙 */
+        .watermark-text {
+            position: relative;
+            display: inline-block;
+            padding-top: 28px;
+        }
+
+        .watermark-logo {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .modal-body {
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            z-index: 3;
+        }
+
+        .modal-close:hover { color: #333; }
+
+        .modal h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-right: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-label {
+            width: 80px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            flex: 1;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .hidden { display: none !important; }
+
+        .decrypt-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .privacy-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .privacy-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .privacy-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .privacy-header img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .privacy-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .privacy-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .privacy-body h4 {
+            font-size: 15px;
+            margin: 15px 0 8px 0;
+            color: #333;
+        }
+
+        .privacy-body p {
+            margin-bottom: 10px;
+        }
+
+        .privacy-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .privacy-footer button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .privacy-footer .btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .privacy-footer .btn-confirm {
+            background: #2196F3;
+            color: white;
+        }
+
+        .privacy-footer .btn-confirm:disabled {
+            background: #b0b0b0;
+            cursor: not-allowed;
+        }
+
+        .countdown-text {
+            font-size: 12px;
+            color: #999;
+            margin-right: 10px;
+            align-self: center;
+        }
+
+        /* 关于网站弹窗 */
+        .about-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .about-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .about-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .about-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .about-close:hover { color: #333; }
+
+        .about-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .about-body h4 {
+            font-size: 15px;
+            margin: 15px 0 8px 0;
+            color: #333;
+        }
+
+        .about-body p {
+            margin-bottom: 10px;
+        }
+
+        .about-qr {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .about-qr img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .about-qr p {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .about-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .about-footer button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            background: #2196F3;
+            color: white;
+        }
+
+        .about-footer button:hover {
+            background: #1976D2;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="CHLEYA.png" alt="常理业" onerror="this.style.display='none'">
+            </div>
+            <h2>常理业信息服务</h2>
+            <input type="text" id="user" placeholder="账号" value="CHLEYA">
+            <input type="password" id="pass" placeholder="密码">
+            <div class="error" id="err">账号或密码错误</div>
+            <button onclick="showLoginPrivacy()">登录</button>
+        </div>
+    </div>
+
+    <div id="mainPage" class="hidden">
+        <div class="container">
+            <div class="header">
+                <div class="header-left">
+                    <img src="CHLEYA.png" alt="常理业" class="header-logo" onerror="this.style.display='none'">
+                    <h1>信息列表</h1>
+                </div>
+                <div class="header-actions">
+                    <button onclick="logout()">退出</button>
+                </div>
+            </div>
+
+            <div id="decryptError" class="decrypt-error hidden">
+                数据解密失败：密码错误，无法解密数据
+            </div>
+
+            <input type="text" class="search-box hidden" id="search" placeholder="搜索..." oninput="doSearch()">
+
+            <div class="search-options hidden" id="searchOptions">
+                <span>搜索范围：</span>
+                <label><input type="radio" name="searchType" value="name" checked onchange="doSearch()"> 学生姓名</label>
+                <label><input type="radio" name="searchType" value="id" onchange="doSearch()"> 序号</label>
+                <label><input type="radio" name="searchType" value="parent" onchange="doSearch()"> 家长姓名</label>
+                <label><input type="radio" name="searchType" value="phone" onchange="doSearch()"> 电话号码</label>
+                <label><input type="radio" name="searchType" value="address" onchange="doSearch()"> 家庭住址</label>
+            </div>
+
+            <div class="stats hidden" id="stats">
+                <div class="stat-item">
+                    <div class="num" id="male">0</div>
+                    <div class="label">男生</div>
+                </div>
+                <div class="stat-item">
+                    <div class="num" id="female">0</div>
+                    <div class="label">女生</div>
+                </div>
+                <div class="stat-item">
+                    <div class="num" id="total">0</div>
+                    <div class="label">总人数</div>
+                </div>
+            </div>
+
+            <div class="action-buttons hidden" id="actionButtons">
+                <button class="action-btn mailbox-action" onclick="showMailboxPrivacy()">常理业信箱</button>
+                <button class="action-btn about-action" onclick="showAbout()">关于此网站</button>
+            </div>
+
+            <div class="list hidden" id="list"></div>
+
+            <div class="pagination-controls hidden" id="pagination">
+                <div class="page-size-selector">
+                    <span>每页显示：</span>
+                    <select id="pageSize" onchange="changePageSize()">
+                        <option value="20" selected>20条</option>
+                        <option value="50">50条</option>
+                        <option value="100">100条</option>
+                        <option value="all">全部</option>
+                    </select>
+                </div>
+                <div class="page-nav" id="pageNav">
+                    <button onclick="prevPage()" id="btnPrev">上一页</button>
+                    <span class="page-info" id="pageInfo">第 1 页 / 共 1 页</span>
+                    <button onclick="nextPage()" id="btnNext">下一页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="watermark-container">
+                <div class="watermark-grid" id="watermarkGrid"></div>
+            </div>
+
+            <div class="modal-body">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <h3 id="mName"></h3>
+                <div class="detail-row">
+                    <div class="detail-label">序号</div>
+                    <div class="detail-value" id="mId"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">性别</div>
+                    <div class="detail-value" id="mGender"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">家长</div>
+                    <div class="detail-value" id="mParent"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">电话</div>
+                    <div class="detail-value" id="mPhone"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">地址</div>
+                    <div class="detail-value" id="mAddr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="privacy-modal" id="loginPrivacyModal">
+        <div class="privacy-content">
+            <div class="privacy-header">
+                <img src="CHLEYA.png" alt="常理业" onerror="this.style.display='none'">
+                <div>
+                    <h3>常理业信息服务</h3>
+                    <p style="font-size:12px;color:#999">登录须知</p>
+                </div>
+            </div>
+            <div class="privacy-body">
+                <h4>一、版本信息</h4>
+                <p>本网站目前处于测试阶段，如出现无法打开网站的情况，请使用移动数据进行访问。</p>
+
+                <h4>二、账号安全</h4>
+                <p>请各位用户对解密密码进行严格保密，避免隐私泄露的情况出现，导致一些不必要的麻烦。</p>
+
+                <h4>三、数据保护</h4>
+                <p>系统采用PBKDF2+AES-256-GCM加密技术保护您的数据安全。所有信息均经过加密存储。</p>
+
+                <h4>四、意见反馈</h4>
+                <p>如果您有其他需求或者意见，请在登录后点击常理业邮箱，进行反馈，我们会尽可能的满足您的需求。</p>
+            </div>
+            <div class="privacy-footer">
+                <span class="countdown-text" id="loginCountdown">请阅读协议 (3)</span>
+                <button class="btn-cancel" onclick="closeLoginPrivacy()">取消</button>
+                <button class="btn-confirm" id="loginConfirmBtn" onclick="confirmLoginPrivacy()" disabled>已阅读</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="privacy-modal" id="mailboxPrivacyModal">
+        <div class="privacy-content">
+            <div class="privacy-header">
+                <img src="CHLEYA.png" alt="常理业" onerror="this.style.display='none'">
+                <div>
+                    <h3>常理业信息服务</h3>
+                    <p style="font-size:12px;color:#999">常理业信箱投递须知</p>
+                </div>
+            </div>
+            <div class="privacy-body">
+                <h4>一、信箱服务</h4>
+                <p>如果您有任何意见、需求、或者对于本校的提议均可在此反馈，常理业会尽可能的满足。</p>
+
+                <h4>二、信件保密</h4>
+                <p>您的信件常理业不会提供给任何人，请放心填写。</p>
+
+                <h4>三、跳转告知</h4>
+                <p>点击"已阅读"后，您将跳转到信箱网站。</p>
+
+                <h4>四、联系方式</h4>
+                <p>常理业的其他联系方式，邮箱地址：efhshf@qq.com、QQ号码：1516454342和公众号联系。</p>
+            </div>
+            <div class="privacy-footer">
+                <span class="countdown-text" id="mailboxCountdown">请阅读协议 (3)</span>
+                <button class="btn-cancel" onclick="closeMailboxPrivacy()">取消</button>
+                <button class="btn-confirm" id="mailboxConfirmBtn" onclick="confirmMailboxPrivacy()" disabled>已阅读</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-modal" id="aboutModal">
+        <div class="about-content">
+            <div class="about-header">
+                <h3>关于此网站</h3>
+                <span class="about-close" onclick="closeAbout()">&times;</span>
+            </div>
+            <div class="about-body">
+                <h4>版本信息</h4>
+                <p>当前版本：v1.0</p>
+                <p>更新日期：2026年5月</p>
+
+                <h4>联系方式</h4>
+                <p>常理业的联系方式，邮箱地址：efhshf@qq.com、QQ号码：1516454342和公众号联系。</p>
+
+                <div class="about-qr">
+                    <img src="GGH.png" alt="公众号二维码" onerror="this.style.display='none';this.nextElementSibling.textContent='图片加载失败'">
+                    <p>关注常理业公众号</p>
+                </div>
+            </div>
+            <div class="about-footer">
+                <button onclick="closeAbout()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let STUDENTS_DATA = [];
+        let filtered = [];
+
+        const VALID_USER = 'CHLEYA';
+
+        let currentPage = 1;
+        let pageSize = 20;
+        let totalPages = 1;
+        let loginCountdownTimer = null;
+        let mailboxCountdownTimer = null;
+
+        async function deriveKey(password, salt) {
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(password),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveKey']
+            );
+
+            return await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 10000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+        }
+
+        async function decryptData(encryptedBase64, password) {
+            const encryptedData = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
+            const salt = encryptedData.slice(0, 16);
+            const iv = encryptedData.slice(16, 28);
+            const ciphertext = encryptedData.slice(28);
+
+            const key = await deriveKey(password, salt);
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                ciphertext
+            );
+
+            const decoder = new TextDecoder();
+            return JSON.parse(decoder.decode(decrypted));
+        }
+        
+        function generateWatermark() {
+            const grid = document.getElementById('watermarkGrid');
+
+            let html = '';
+            for (let i = 0; i < 100; i++) {
+                html += `
+                    <div class="watermark-item">
+                        <span class="watermark-text">
+                            <img src="CHLEYA.png" class="watermark-logo" onerror="this.style.display='none'">
+                            常理业
+                        </span>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+
+        function showLoginPrivacy() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+
+            if (u !== VALID_USER) {
+                document.getElementById('err').textContent = '账号错误';
+                document.getElementById('err').style.display = 'block';
+                return;
+            }
+
+            if (!p) {
+                document.getElementById('err').textContent = '请输入密码';
+                document.getElementById('err').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('err').style.display = 'none';
+            document.getElementById('loginPrivacyModal').style.display = 'flex';
+
+            let count = 3;
+            const btn = document.getElementById('loginConfirmBtn');
+            const text = document.getElementById('loginCountdown');
+            btn.disabled = true;
+            text.textContent = `请阅读协议 (${count})`;
+
+            if (loginCountdownTimer) clearInterval(loginCountdownTimer);
+            loginCountdownTimer = setInterval(() => {
+                count--;
+                if (count <= 0) {
+                    clearInterval(loginCountdownTimer);
+                    btn.disabled = false;
+                    text.textContent = '已可点击';
+                } else {
+                    text.textContent = `请阅读协议 (${count})`;
+                }
+            }, 1000);
+        }
+
+        function closeLoginPrivacy() {
+            document.getElementById('loginPrivacyModal').style.display = 'none';
+            if (loginCountdownTimer) clearInterval(loginCountdownTimer);
+        }
+
+        async function confirmLoginPrivacy() {
+            closeLoginPrivacy();
+            await doLogin();
+        }
+
+        function showMailboxPrivacy() {
+            document.getElementById('mailboxPrivacyModal').style.display = 'flex';
+
+            let count = 3;
+            const btn = document.getElementById('mailboxConfirmBtn');
+            const text = document.getElementById('mailboxCountdown');
+            btn.disabled = true;
+            text.textContent = `请阅读协议 (${count})`;
+
+            if (mailboxCountdownTimer) clearInterval(mailboxCountdownTimer);
+            mailboxCountdownTimer = setInterval(() => {
+                count--;
+                if (count <= 0) {
+                    clearInterval(mailboxCountdownTimer);
+                    btn.disabled = false;
+                    text.textContent = '已可点击';
+                } else {
+                    text.textContent = `请阅读协议 (${count})`;
+                }
+            }, 1000);
+        }
+
+        function closeMailboxPrivacy() {
+            document.getElementById('mailboxPrivacyModal').style.display = 'none';
+            if (mailboxCountdownTimer) clearInterval(mailboxCountdownTimer);
+        }
+
+        function confirmMailboxPrivacy() {
+            closeMailboxPrivacy();
+            window.location.href = 'https://ccnrfa8t95t6.feishu.cn/share/base/form/shrcnPBeeyBK3ZIR3QH3VGEbUBh';
+        }
+
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
+
+        function closeAbout() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        async function doLogin() {
+            const p = document.getElementById('pass').value;
+
+            if (typeof ENCRYPTED_DATA === 'undefined') {
+                document.getElementById('err').textContent = '未找到数据文件 data.js';
+                document.getElementById('err').style.display = 'block';
+                return;
+            }
+
+            try {
+                STUDENTS_DATA = await decryptData(ENCRYPTED_DATA, p);
+
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainPage').classList.remove('hidden');
+
+                document.getElementById('search').classList.remove('hidden');
+                document.getElementById('searchOptions').classList.remove('hidden');
+                document.getElementById('stats').classList.remove('hidden');
+                document.getElementById('actionButtons').classList.remove('hidden');
+                document.getElementById('list').classList.remove('hidden');
+                document.getElementById('pagination').classList.remove('hidden');
+
+                generateWatermark();
+                initData();
+
+            } catch (e) {
+                document.getElementById('err').textContent = '密码错误，无法解密数据';
+                document.getElementById('err').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        function initData() {
+            filtered = STUDENTS_DATA;
+            currentPage = 1;
+            updateStats();
+            render();
+        }
+
+        function updateStats() {
+            document.getElementById('total').textContent = STUDENTS_DATA.length;
+            document.getElementById('male').textContent = STUDENTS_DATA.filter(x => x.gender === '男').length;
+            document.getElementById('female').textContent = STUDENTS_DATA.filter(x => x.gender === '女').length;
+        }
+
+        function getPageData() {
+            if (pageSize === 'all') {
+                return filtered;
+            }
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            return filtered.slice(start, end);
+        }
+
+        function updatePagination() {
+            const total = filtered.length;
+
+            if (pageSize === 'all') {
+                document.getElementById('pageNav').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('pageNav').style.display = 'flex';
+            totalPages = Math.ceil(total / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            document.getElementById('pageInfo').textContent = `第 ${currentPage} 页 / 共 ${totalPages} 页 (共${total}条)`;
+            document.getElementById('btnPrev').disabled = currentPage <= 1;
+            document.getElementById('btnNext').disabled = currentPage >= totalPages;
+        }
+
+        function changePageSize() {
+            const select = document.getElementById('pageSize');
+            const val = select.value;
+            pageSize = val === 'all' ? 'all' : parseInt(val);
+            currentPage = 1;
+            render();
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                render();
+            }
+        }
+
+        function render() {
+            const list = document.getElementById('list');
+            const pageData = getPageData();
+
+            if (pageData.length === 0) {
+                list.innerHTML = '<div class="empty">无匹配结果</div>';
+                updatePagination();
+                return;
+            }
+
+            list.innerHTML = pageData.map((s, i) => {
+                const realIndex = filtered.indexOf(s);
+
+                return `
+                <div class="student-item" onclick="showDetail(${realIndex})">
+                    <div class="student-info">
+                        <h3>
+                            ${s.name || '未知'}
+                            <span class="tag ${s.gender === '男' ? 'male' : 'female'}">${s.gender || '未知'}</span>
+                        </h3>
+                        <p>序号: ${s.id || (filtered.indexOf(s) + 1)}</p>
+                    </div>
+                    <div style="text-align:right">
+                        <p style="font-size:12px;color:#999">点击查看详情</p>
+                    </div>
+                </div>
+            `}).join('');
+
+            updatePagination();
+        }
+
+        function doSearch() {
+            const q = document.getElementById('search').value.toLowerCase().trim();
+            const searchType = document.querySelector('input[name="searchType"]:checked').value;
+
+            if (!q) {
+                filtered = STUDENTS_DATA;
+            } else {
+                filtered = STUDENTS_DATA.filter(s => {
+                    switch(searchType) {
+                        case 'name':
+                            return s.name && s.name.toLowerCase().includes(q);
+                        case 'id':
+                            return s.id && String(s.id).includes(q);
+                        case 'parent':
+                            return s.parent && s.parent.toLowerCase().includes(q);
+                        case 'phone':
+                            return s.phone && s.phone.includes(q);
+                        case 'address':
+                            return s.address && s.address.toLowerCase().includes(q);
+                        default:
+                            return false;
+                    }
+                });
+            }
+
+            currentPage = 1;
+            render();
+        }
+
+        function showDetail(i) {
+            const s = filtered[i];
+            if (!s) return;
+
+            document.getElementById('mName').textContent = s.name || '-';
+            document.getElementById('mId').textContent = s.id || '-';
+            document.getElementById('mGender').textContent = s.gender || '-';
+            document.getElementById('mParent').textContent = s.parent || '-';
+            document.getElementById('mPhone').textContent = s.phone || '-';
+            document.getElementById('mAddr').textContent = s.address || '-';
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (!e || e.target.id === 'modal') {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+
+        document.getElementById('pass').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') showLoginPrivacy();
+        });
+    </script>
+</body>
+</html>
