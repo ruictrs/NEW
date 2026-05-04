@@ -776,17 +776,8 @@
                 </div>
             </div>
             <div class="privacy-body">
-                <h4>一、版本信息</h4>
-                <p>本网站目前处于测试阶段，如出现无法打开网站的情况，请使用移动数据进行访问。</p>
-
-                <h4>二、账号安全</h4>
-                <p>请各位用户对解密密码进行严格保密，避免隐私泄露的情况出现，导致一些不必要的麻烦。</p>
-
-                <h4>三、数据保护</h4>
-                <p>系统采用PBKDF2+AES-256-GCM加密技术保护您的数据安全。所有信息均经过加密存储。</p>
-
-                <h4>四、意见反馈</h4>
-                <p>如果您有其他需求或者意见，请在登录后点击常理业邮箱，进行反馈，我们会尽可能的满足您的需求。</p>
+                <h4>维护告知</h4>
+                <p>数据库正在维护，暂时无法通过此入口访问；如果您有需求，请与常理业联系，我们会单独开启临时通道提供使用！对于本次维护请您谅解，谢谢合作。</p>
             </div>
             <div class="privacy-footer">
                 <span class="countdown-text" id="loginCountdown">请阅读协议 (3)</span>
@@ -1013,7 +1004,7 @@
             const p = document.getElementById('pass').value;
 
             if (typeof ENCRYPTED_DATA === 'undefined') {
-                document.getElementById('err').textContent = '未找到数据文件 data.js';
+                document.getElementById('err').textContent = '数据库连接失败，请刷新网页！';
                 document.getElementById('err').style.display = 'block';
                 return;
             }
